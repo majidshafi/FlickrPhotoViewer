@@ -5,6 +5,8 @@
     /// </summary>
     public static class Constants
     {
+
+        public static readonly int MAX_PHOTOS = 4000;
         /// <summary>
         /// Flicker API Key
         /// </summary>

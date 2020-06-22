@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using PhotoViewerApplication.Properties;
 using PhotoViewerApplication.Twitter;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -32,6 +33,9 @@ namespace PhotoViewerApplication
         /// </summary>
         private List<string> photoUrlList = new List<string>();
 
+        /// <summary>
+        /// List of Tweets
+        /// </summary>
         private List<string> photoTweets = new List<string>();
 
         #endregion
@@ -51,9 +55,7 @@ namespace PhotoViewerApplication
             }
 
         }
-
-      
-
+        
         private int? numerOfPhotos;
 
         /// <summary>
@@ -83,7 +85,6 @@ namespace PhotoViewerApplication
                 Set(ref photoCollection, value);
             }
         }
-
      
         private bool isTaskDone;
 
@@ -148,7 +149,7 @@ namespace PhotoViewerApplication
             log.Info(string.Format("Data Initialization: Class {0} Method {1}", nameof(PhotoViewModel), nameof(InitializeData)));
             myTwitter = new MyTwitterModule();
             myFlicker = new MyFlickerModule();
-            FetchImageCommand = new RelayCommand(async () => await FetchPhotos());
+            FetchImageCommand = new RelayCommand(async () => await FetchPhotosAndTweets());
         }
 
         /// <summary>
@@ -168,11 +169,11 @@ namespace PhotoViewerApplication
             }
             else if (NumberOfPhotos == 0)
             {
-                MessageBox.Show(Resources.NumOfPhotosErrorMessage, Resources.NumOfPhotosCaption, MessageBoxButton.OK, MessageBoxImage.Information);
-                log.Debug(string.Format("Number of Photos is not numeric, Class {0} Method {1}", nameof(PhotoViewModel), nameof(ValidateData)));
+                MessageBox.Show(Resources.NumOfPhotosZeroErrorMessage, Resources.NumOfPhotosCaption, MessageBoxButton.OK, MessageBoxImage.Information);
+                log.Debug(string.Format("Number of Photos should be > 0 & < 4000, Class {0} Method {1}", nameof(PhotoViewModel), nameof(ValidateData)));
                 NumberOfPhotos = 0;
             }
-            else if (NumberOfPhotos > 4000)
+            else if (NumberOfPhotos > Constants.MAX_PHOTOS)
             {
                 MessageBox.Show(Resources.NumOfPhotosExceed, Resources.NumOfPhotosCaption, MessageBoxButton.OK, MessageBoxImage.Information);
                 log.Debug(string.Format("Number of Photos is > 4000, Class {0} Method {1}", nameof(PhotoViewModel), nameof(ValidateData)));
@@ -187,68 +188,82 @@ namespace PhotoViewerApplication
         }
 
         /// <summary>
-        /// Fetches the photo url from the flicker
+        /// Fetches the photo url from the flicker & tweets from Twitter
         /// </summary>
         /// <returns></returns>
-        private async Task FetchPhotos()
+        private async Task FetchPhotosAndTweets()
         {
-            log.Info(string.Format("Fetching Photos: Class {0} Method {1}", nameof(PhotoViewModel), nameof(FetchPhotos)));
+            log.Info(string.Format("Fetching Photos & Tweets: Class {0} Method {1}", nameof(PhotoViewModel), nameof(FetchPhotosAndTweets)));
             IsTaskDone = false;
-            if (ValidateData())
+            try
             {
-                IsIndicatorBusy = true;
-                BusyContentMessage = Resources.PhotosDownloadingMessage;
-
-                if (myFlicker != null)
+                if (ValidateData())
                 {
-                    await Application.Current.Dispatcher.Invoke(async () =>
+                    IsIndicatorBusy = true;
+                    BusyContentMessage = Resources.PhotosDownloadingMessage;
+
+                    if (myFlicker != null && myTwitter != null)
                     {
-                         PhotoCollections.Clear();
-                         photoUrlList.Clear();
-                        photoTweets.Clear();
-
-                        photoUrlList = myFlicker.GetPhotoUrlList(NumberOfPhotos.Value, SearchText);
-                        photoTweets = myTwitter.GetTwitterFeeds(SearchText);
-                        string fd = "";
-                        if (photoTweets != null && photoTweets.Count > 0)
+                        await Application.Current.Dispatcher.Invoke(async () =>
                         {
-                            int count = 0;
-                            foreach(string tw in photoTweets)
-                            {
-                                if (count < 2)
+                            // Clear Photo Containers
+                            PhotoCollections.Clear();
+                            photoUrlList.Clear();
+                            photoTweets.Clear();
+
+                            // Get Photo URL's
+                            photoUrlList = myFlicker.GetPhotoUrlList(NumberOfPhotos.Value, SearchText);
+                            // Get Tweets
+                            photoTweets = myTwitter.GetTwitterFeeds(SearchText);
+                            string twitterFeeds = "";
+
+                            // Take first two tweets for UI purpose
+                            if (photoTweets != null && photoTweets.Count > 0)
                                 {
-                                    fd += tw + ",";
-                                    count++;
+                                    int count = 0;
+                                    foreach (string tw in photoTweets)
+                                    {
+                                        if (count < 2)
+                                        {
+                                            twitterFeeds += tw + ",";
+                                            count++;
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                        else
-                        {
-                            fd = string.Format("Couldn't find any tweets associated with {0}", SearchText);
-                        }
+                                else
+                                {
+                                    twitterFeeds = Resources.NoTweetsMessage;
+                                    photoTweets = new List<string>();
+                                }
 
-                        if (photoUrlList != null && photoUrlList.Count > 0)
-                        {
-                            foreach (string url in photoUrlList)
-                            {
-                                PhotoCollections.Add(new PhotoViewerCollection { PhotoUrl = url, Tweets = fd });
-                                await Task.Delay(10);
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Couldn't find any photos", "asdfa", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                       
-                    });
+                                if (photoUrlList != null && photoUrlList.Count > 0)
+                                {
+                                    foreach (string url in photoUrlList)
+                                    {
+                                        PhotoCollections.Add(new PhotoViewerCollection { PhotoUrl = url, Tweets = twitterFeeds });
+                                        await Task.Delay(10);
+                                    }
+                                }
+                                else
+                                {
+                                    MessageBox.Show(Resources.NoPhotosMessage, Resources.NoPhotosCaptionMessage, MessageBoxButton.OK, MessageBoxImage.Information);
+                                    photoUrlList = new List<string>();
+                                }
+
+                            });
+                            IsTaskDone = true;
+                    }
+                    IsIndicatorBusy = false;
                     IsTaskDone = true;
                 }
-                IsIndicatorBusy = false;
-                IsTaskDone = true;
+                else
+                {
+                    log.Error(string.Format("Validation of Data Failed : Class {0} Method {1}", nameof(PhotoViewModel), nameof(FetchPhotosAndTweets)));
+                }
             }
-            else
+            catch(Exception ex)
             {
-                log.Error(string.Format("Validation of Data Failed : Class {0} Method {1}", nameof(PhotoViewModel), nameof(FetchPhotos)));
+                log.Error(string.Format("Exception occured in FetchPhotosAndTweets : Class {0} Method {1} Exception {2}", nameof(PhotoViewModel), nameof(FetchPhotosAndTweets),ex.Message.ToString()));
             }
         }
         #endregion

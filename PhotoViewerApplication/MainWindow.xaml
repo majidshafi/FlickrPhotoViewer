@@ -3,13 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                xmlns:extl="http://schemas.xceed.com/wpf/xaml/toolkit"
-
+        xmlns:extl="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="PhotoViewerApplication" FontSize="12" FontWeight="SemiBold" Height="600" Width="800">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="con">
-            
         </BooleanToVisibilityConverter>
     </Window.Resources>
     <extl:BusyIndicator IsBusy="{Binding IsIndicatorBusy}" BusyContent="{Binding BusyContentMessage}">
@@ -38,7 +36,6 @@
                 <Button VerticalContentAlignment="Center" VerticalAlignment="Center" Content="Fetch Images"  Height="28"  Grid.Column="4" Margin="280,0,0,0" Command="{Binding FetchImageCommand}"/>
             </Grid>
             <ScrollViewer Margin="0,20,0,20" Grid.Row="3" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
-
                 <ListBox Visibility="{Binding IsTaskDone,Converter={StaticResource con}}" VirtualizingStackPanel.IsVirtualizing="True" ScrollViewer.IsDeferredScrollingEnabled="True" VirtualizingStackPanel.VirtualizationMode="Recycling"  ItemsSource="{Binding PhotoCollections}">
                     <ListBox.Template>
                         <ControlTemplate TargetType="ItemsControl">
@@ -52,16 +49,12 @@
                             <UniformGrid Columns="4" HorizontalAlignment="Stretch"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
-
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-
                                 <Image Grid.Row="1" Source="{Binding PhotoUrl,Mode=OneTime,IsAsync=True}"
                                    RenderOptions.BitmapScalingMode="Fant" Stretch="UniformToFill" Margin="0" Width="256" Height="256" />
-
-                                <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Tweets,Mode=OneWay}" TextWrapping="Wrap" Width="256" Height="Auto"/>
-
+                                <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Tweets,Mode=OneWay}" TextWrapping="WrapWithOverflow" Width="256" Height="Auto"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

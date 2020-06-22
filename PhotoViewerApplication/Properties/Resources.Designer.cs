@@ -75,11 +75,11 @@ namespace PhotoViewerApplication.Properties {
             }
         }
 
-        internal static string NumOfPhotosErrorMessage
+        internal static string NumOfPhotosZeroErrorMessage
         {
             get
             {
-                return ResourceManager.GetString("NumOfPhotosErrorMessage", resourceCulture);
+                return ResourceManager.GetString("NumOfPhotosZeroErrorMessage", resourceCulture);
             }
         }
 
@@ -132,6 +132,34 @@ namespace PhotoViewerApplication.Properties {
             get
             {
                 return ResourceManager.GetString("TwitterAuthenticationErrorCaption", resourceCulture);
+            }
+        }
+        internal static string NoTweetsMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("NoTweetsMessage", resourceCulture);
+            }
+        }
+        internal static string NoTweetsCaptionMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("NoTweetsCaptionMessage", resourceCulture);
+            }
+        }
+        internal static string NoPhotosMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("NoPhotosMessage", resourceCulture);
+            }
+        }
+        internal static string NoPhotosCaptionMessage
+        {
+            get
+            {
+                return ResourceManager.GetString("NoPhotosCaptionMessage", resourceCulture);
             }
         }
     }

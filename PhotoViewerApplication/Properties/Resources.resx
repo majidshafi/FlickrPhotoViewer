@@ -120,16 +120,12 @@
 	<data name="SearchTextCaption" xml:space="preserve">
 		<value>Search Text Information.</value>
 	</data>
-	<data name="NumOfPhotosErrorMessage" xml:space="preserve">
-		<value>"Please enter valid number of photos[1-1000]".</value>
+	<data name="NumOfPhotosZeroErrorMessage" xml:space="preserve">
+		<value>"Please enter valid number of photos[1-4000]".</value>
 	</data>
 	<data name="NumOfPhotosExceed" xml:space="preserve">
 		<value>"Maximum number of photos to search is 4000. Please try again.".</value>
 	</data>
-	<data name="NumOfPhotosErrorMessageNumeric" xml:space="preserve">
-		<value>"Please enter numeric value for number of photos".</value>
-	</data>
-	
 	<data name="PhotosDownloadingMessage" xml:space="preserve">
 		<value>Please wait, photos are being fetched from Flickr</value>
 	</data>
@@ -149,5 +145,17 @@
 	</data>
 	<data name="TwitterAuthenticationErrorCaption" xml:space="preserve">
 		<value>Twitter User Authentication Failed...</value>
+	</data>
+	<data name="NoTweetsMessage" xml:space="preserve">
+		<value>Couldn't find any tweets associated.</value>
+	</data>
+	<data name="NoTweetsCaptionMessage" xml:space="preserve">
+		<value>No Tweets Information</value>
+	</data>
+	<data name="NoPhotosMessage" xml:space="preserve">
+		<value>Couldn't find any Photos.</value>
+	</data>
+	<data name="NoPhotosCaptionMessage" xml:space="preserve">
+		<value>No Photos Information</value>
 	</data>
 </root>
