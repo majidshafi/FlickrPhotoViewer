@@ -53,7 +53,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                                 <Image Grid.Row="1" Source="{Binding PhotoUrl,Mode=OneTime,IsAsync=True}"
-                                   RenderOptions.BitmapScalingMode="Fant" Stretch="UniformToFill" Margin="0" Width="256" Height="256" />
+                                   RenderOptions.BitmapScalingMode="Fant" Stretch="UniformToFill" Margin="0" Width="128" Height="128" />
                                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Tweets,Mode=OneWay}" TextWrapping="WrapWithOverflow" Width="256" Height="Auto"/>
                             </StackPanel>
                         </DataTemplate>

@@ -67,7 +67,7 @@ namespace PhotoViewerApplication
                     }
                     catch(Exception ex)
                     {
-                        log.Error(string.Format("Flicker Authorization Failed, exiting the application: Class {0} Method {1}", nameof(MyFlickerModule), nameof(InitializeData)));
+                        log.Error(string.Format("Flicker Authorization Failed, exiting the application: Class {0} Method {1} exception {2}", nameof(MyFlickerModule), nameof(InitializeData),ex.Message.ToString()));
                         MessageBox.Show(Resources.AuthenticationError, Resources.AuthenticationErrorCaption, MessageBoxButton.OK, MessageBoxImage.Error);
                         Application.Current.Shutdown();
                     }
